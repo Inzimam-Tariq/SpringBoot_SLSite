@@ -16,7 +16,7 @@
         </head>
         <% response.getWriter().flush(); %>
         <body style="padding-bottom: 70px;" onload="changeMembershipBadgeColor()">
-            <%--<jsp:include page="sidebar.jsp" />--%> 
+            <jsp:include page="usernavbar.jsp" />
             <div class="container-fluid">
                 <div class="row">
                     <!--/left advert space-->
@@ -37,27 +37,52 @@
                         <h1 class="display-4 d-md-display-4"><b></b></h1>
                         <div class="container-fluid"><br>
 
-                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                <h4 class="alert-heading">Account not confirmed!</h4>
-                                <hr>
-                                <p class="mb-0">Your account is not yet confirmed. please check your email.</p>
-                            </div>
+                            <c:if test="${!user.isEnabled()}">
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    <h4 class="alert-heading">Account not confirmed!</h4>
+                                    <hr>
+                                    <p class="mb-0">Your account is not yet confirmed. please check your email.
+                                        Did not get any email? <a href="/sendMail">Re-send</a>
+                                    </p>
+                                </div>
+                            </c:if>
 
-                            <div class="alert alert-primary alert-dismissible fade show" role="alert">
-                                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                <h4 class="alert-heading">No Shortlink!</h4>
-                                <p>You need to consider this info!</p>
-                                <hr>
-                                <p class="mb-0">You don't have any shortlink yet. Create one <b><a href="/create_sl">here</a></b></p>
-                            </div>
+                            <c:if test="${urlTotal <=0}">
+                                <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    <h4 class="alert-heading">No Shortlink!</h4>
+                                    <p>You need to consider this info!</p>
+                                    <hr>
+                                    <p class="mb-0">You don't have any shortlink yet. Create one <b><a href="/createSl">here</a></b></p>
+                                </div>
+                            </c:if>
+
+                            <!--Success and error notifications-->
+                            <c:if test="${param.error != null}">
+                                <div class="alert alert-danger alert-dismissible fade show">
+                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    <h4 class="alert-heading">Error Alert:</h4>
+                                    <hr>
+                                    <p><c:out value = "${param.error}"/></p>
+                                </div>
+                            </c:if>
+
+                            <c:if test="${param.msg !=null}">
+                                <div class="alert alert-success alert-dismissible fade show">
+                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    <h4 class="alert-heading">Success:</h4>
+                                    <hr>
+                                    <p><c:out value = "${param.msg}"/></p>
+                                </div>                            
+                            </c:if>
 
 
                             <div class="card-deck">
                                 <div class="card card-block d-flex text-center bg-dark">
                                     <div class="card-header rounded text-light">
                                         <label>Account </label> <a href="/logout"><b> Logout</b></a>
-                                        <div style="position: absolute; right: 0px; top: 8px; z-index: 2">                                        
+                                        <div style="position: absolute; right: 0px; top: 8px; z-index: 2">
                                             <span class="fa-stack fa-lg" >
                                                 <i id="mem_badge" class="fas fa-award fa-stack-2x" style="color:#fff;" data-toggle="tooltip" data-placement=" auto" title="Your Current Membership is Silver Membership. You can upgrade to avail more feature!"></i>
                                             </span>
@@ -103,22 +128,22 @@
                                         </span>
                                         <h2>Shortlinks</h2>
                                         <br>
-                                        <div class="text-center">Check all your <a href="/links">links here</a></div>
-                                        <div class="text-center">Make new shortlink <a href="/create_sl">here</a></div>                                        
+                                        <div class="text-center">Check all your <a href="/userLinks">links here</a></div>
+                                        <div class="text-center">Make new shortlink <a href="/createSl">here</a></div>                                        
                                     </div>
                                 </div>
                                 <div class="card card-block d-flex text-center bg-dark">
-                                    <div class="card-header rounded text-light"><label>Account Summary</label></div>
+                                    <div class="card-header rounded text-light"><label>Stats Summary</label></div>
                                     <div class="card-body d-flex flex-column justify-content-center align-items-center text-center text-light">
                                         <span class="fa-stack fa-lg">
                                             <i class="far fa-circle fa-stack-2x"></i>
                                             <i class="fas fa-bar-chart fa-stack-1x"></i>
                                         </span>
                                         <h2>Stats</h2>
-                                        <div>Total Shortlinks: <label id="shortlink_count">0</label></div>
-                                        <div>Shortlinks in 30 days: <label id="shortlink_count">0</label></div>
-                                        <div>Shortlinks in 7 days: <label id="shortlink_count">0</label></div>
-                                        <div>Shortlinks today: <label id="shortlink_count">0</label></div>
+                                        <div>Total Shortlinks: <label id="shortlink_count">${urlTotal}</label></div>
+                                        <div>Shortlinks in 30 days: <label id="shortlink_count">${url30days}</label></div>
+                                        <div>Shortlinks in 7 days: <label id="shortlink_count">${url7days}</label></div>
+                                        <div>Shortlinks today: <label id="shortlink_count">${urlToday}</label></div>
                                     </div>
                                 </div>
                             </div>
@@ -208,6 +233,7 @@
                     <div class="col-sm-3" style="background-color:lavender;">
                         <div class="container-fluid">
                             <div class="row">
+
                                 <div class="col-sm-6 d-none d-sm-block" style="background-color:orange;">
                                     abc
                                 </div>

@@ -30,6 +30,7 @@
         </head>
         <% response.getWriter().flush(); %>
         <body style="padding-bottom: 70px;">
+            <jsp:include page="navbar.jsp" />
             <div class="container-fluid" style="padding: 40px 40px">
 
                 <div class="row">
@@ -40,11 +41,8 @@
                 </div>
 
                 <div class="row">
+                    
                     <div class="col-sm-6">
-                        <h4>SatoKing, The King of Faucets</h4>
-                        <p>Claim multiple coins (Bitcoin & Altcoins) and withdraw instantly to your FaucetHub account. For details of the features please click <a href="#site_features">here</a></p>
-                    </div>
-                    <div class="col-sm-6" style="background-color:none;">
                         <!-- Login form code start-->
                         <form class="signup-form bg-dark text-light" action="register" method="Post"
                               oninput="result.value=!!confirm_password.value&&(uPassword.value==confirm_password.value)?'Matched!':'Both password fields must be same!'">
@@ -75,7 +73,7 @@
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">
-                                        <span class="fa fa-user"></span>
+                                        <span class="fa fas fa-address-card"></span>
                                     </span>                    
                                 </div>
                                 <input type="text" class="form-control" name="fullName" placeholder="Full Name(name & surname)" required="required">
@@ -104,7 +102,7 @@
                             <br>
                             <div class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" id="customCheckbox" name="example1" required="required">
-                                <label class="custom-control-label" for="customCheckbox">I accept the <a href="#">Terms of Use</a> &amp; <a href="#">Privacy Policy</a></label>
+                                <label class="custom-control-label" for="customCheckbox">I accept the <a href="/terms_of_use">Terms of Use</a> &amp; <a href="privacy_policy">Privacy Policy</a></label>
                             </div> 
 
                             <div class="custom-control custom-switch">

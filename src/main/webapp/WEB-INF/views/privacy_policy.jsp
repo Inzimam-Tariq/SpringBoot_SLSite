@@ -17,7 +17,7 @@
         <% response.getWriter().flush(); %>
         <body style="padding-bottom: 70px;">
             
-            <div class="container-fluid">
+            <div class="container-fluid" style="padding-top: 30px">
                 <div class="row">
                     <!--/left advert space-->
                     <div class="col-sm-3 d-none d-sm-block" style="background-color:lavender;">

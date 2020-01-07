@@ -49,10 +49,19 @@
                         <c:if test="${param.logout !=null}">
                             <div class="alert alert-success alert-dismissible fade show">
                                 <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                <strong>Success!</strong>
-                                <p>Logged Out:  <c:out value = "${param.logout}"/></p>
+                                <div class="alter-header"><strong>Logout Success!</strong></div>
+                                <p><c:out value = "${param.logout}"/></p>
                             </div>                            
                         </c:if>
+                        
+                        <c:if test="${param.msg !=null}">
+                            <div class="alert alert-success alert-dismissible fade show">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong>Registration Successful:</strong>
+                                <p><c:out value = "${param.msg}"/></p>
+                            </div>                            
+                        </c:if>
+
                     </div>
                 </div>
 
@@ -65,7 +74,7 @@
                         <!-- Login form code start-->
                         <form class="form-signin bg-dark text-light" action="process_login" method="POST">
                             <div class="text-center mb-4">
-                                <img class="mb-4" src="/img_avatar2.png" alt="" width="72" height="72">
+                                <img class="mb-4" src="images/img_avatar2.png" alt="" width="72" height="72">
                                 <h1 class="h3 mb-3 font-weight-normal">Login</h1>
                                 <p>Login to your existing account!</p>
                                 <hr>

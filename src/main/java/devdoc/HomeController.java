@@ -5,16 +5,19 @@
  */
 package devdoc;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -26,108 +29,147 @@ public class HomeController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    SlUrlService slUrlService;
+    @Autowired
+    UrlRepository urlRepository;
 
-    SlUrl slUrl = new SlUrl();
-
-//    @RequestMapping("/")
-//    public ModelAndView homePage(ModelAndView mv, HttpServletRequest request) throws IOException {
-//        System.out.println("Inside /");
-//
-//        mv.setViewName("home");
-//        String ip = AppUtils.getCurrentIp();
-//        mv.addObject("ip", ip);
-//        mv.addObject("city", AppUtils.getCurrentCity());
-//        System.err.println(AppUtils.getCurrentCity());
-//        System.out.println("IP from request Addr = " + request.getRemoteAddr());
-//        System.out.println("IP from request Host = " + request.getRemoteHost());
-//        return mv;
-//    }
-    @RequestMapping("/home")
-    public ModelAndView homePageWithParams(ModelAndView mv, @RequestParam(value = "username",
-            required = false) String username,
-            @RequestParam(value = "destinationUrl", required = false) String destinationUrl,
-            HttpServletRequest request) throws IOException {
-        System.out.println("Inside /home Get\nDestinationUrl = " + destinationUrl
-                + "\nclaimerUsername = " + username);
-        slUrl.setDestinationUrl(destinationUrl);
-        slUrl.setUsername(username);
-
-        mv.setViewName("home");
-
-        return mv;
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+    
+    @RequestMapping("/MailTemplate")
+    public String openMailTemp(){
+        return "emailspecimen";
     }
-
-    @PostMapping("/home")
-    public ModelAndView submitHomeResponse(ModelAndView mv, HttpServletRequest request,
-            HttpServletResponse httpResponse) throws IOException {
-        System.out.println("Inside /home Post\n" + slUrl.getUsername());
-
-        mv.setViewName("confirm_sl");
-        String ip = AppUtils.getCurrentIp();
-        mv.addObject("isValid", true);
-        System.out.println("IP from request Addr = " + request.getRemoteAddr());
-        System.out.println("IP from request Host = " + request.getRemoteHost());
-        return mv;
-    }
-
-    @RequestMapping("/confirm_sl")
-    public ModelAndView openConfirmSl(ModelAndView mv, HttpServletRequest request) throws IOException {
-        System.out.println("Inside /confirmSl Get");
-
-        mv.setViewName("confirm_sl");
-        String ip = AppUtils.getCurrentIp();
-        mv.addObject("isValid", true);
-        System.out.println("IP from request Addr = " + request.getRemoteAddr());
-        System.out.println("IP from request Host = " + request.getRemoteHost());
-        return mv;
-    }
-
-    @PostMapping("/confirm_sl")
-    public ModelAndView submitConfirmSl(ModelAndView mv, HttpServletRequest request) throws IOException {
-        System.out.println("Inside /confirmSl Post");
-
-        mv.setViewName("home");
-        String ip = AppUtils.getCurrentIp();
-        mv.addObject("ip", ip);
-        mv.addObject("city", AppUtils.getCurrentCity());
-        System.err.println(AppUtils.getCurrentCity());
-        request.getRemoteAddr();
-
-        return mv;
-    }
-
-    @RequestMapping("/shortUrl")
-    public ModelAndView shortUrl(ModelAndView mv) {
-        System.out.println("Inside /shorURL");
-        mv.setViewName("short_url");
-
+    
+    @RequestMapping("/faqs")
+    public ModelAndView openFaqs(ModelAndView mv){
+        String sitename = AppUtils.getSiteName();
+        mv.addObject("sitename", sitename);
+        mv.setViewName("faqs");
         return mv;
     }
 
     @RequestMapping("/dashboard")
     public ModelAndView dashboard(ModelAndView mv) {
         String username = userService.getCurrentLoggedinUsername();
-
         System.out.println("Inside /dashboard\nuNameFrom Auth = " + username);
+        User u = userService.getUserlByEmailOrUsername(username, "Dashboard");
+        List<SlUrl> urlTotal = urlRepository.findLinkByUser(new User(username));
+        System.out.println("\nList size = " + urlTotal.size());
+        Date today = new Date();
+
+        Date days30 = AppUtils.getPreviousDateByDays(-30);
+        Date days7 = AppUtils.getPreviousDateByDays(-7);
+        Date hour24 = AppUtils.getPreviousDateByHours(-23);
+
+        List<SlUrl> urlBetweenDaysByAllUsers = urlRepository.findAllByCreationDateBetween(days30, today);
+
+        List<Object> urlTotal30days = urlRepository.getListOfShortlinksBetweenDates(new User(username), days30, today);
+        List<Object> urlTotal7days = urlRepository.getListOfShortlinksBetweenDates(new User(username), days7, today);
+        List<Object> urlToday = urlRepository.getListOfShortlinksBetweenDates(new User(username), hour24, today);
+        System.out.println("\nLinksShortenToday = "
+                + urlToday.size() + "Today Date = " + hour24);
+
         mv.setViewName("dashboard");
         mv.addObject("username", username);
+        mv.addObject("urlTotal", urlTotal.size());
+        mv.addObject("url30days", urlTotal30days.size());
+        mv.addObject("url7days", urlTotal7days.size());
+        mv.addObject("urlToday", urlToday.size());
+        mv.addObject("user", u);
         return mv;
     }
 
     @RequestMapping("/userProfile/{username}")
-    public ModelAndView profile(@ModelAttribute("user") User user, @PathVariable("username") String username, ModelAndView mv) {
+    public ModelAndView viewProfile(ModelAndView mv, @ModelAttribute("user") User user,
+            @PathVariable("username") String username) {
 
-        user = userService.getUserDetailByEmailOrUsername(username, "UserProfile");
+        if (userService.userHasRight(username)) {
+            user = userService.getUserlByEmailOrUsername(username, "UserProfile");
 
-        System.out.println("Inside /profile\nUsername = " + user.getUsername());
-        mv.setViewName("profile");
+            System.out.println("Inside /profile\nUsername = " + user.getUsername());
+            mv.setViewName("profile");
+        }
 
         mv.addObject("user", user);
 
         return mv;
     }
-    
 
+    @PostMapping("/userProfile/{username}")
+    public ModelAndView updateProfile(ModelAndView mv, User userFromInput,
+            @PathVariable String username) {
+        String currentUsername = userService.getCurrentLoggedinUsername();
+
+        System.out.println("Inside /updateProfile\nUsername = " + userFromInput.getUsername());
+        User userFromDb = userService.getUserlByEmailOrUsername(username, "FromUpdateProfile");
+        if (userFromInput.getPassword() != null) {
+            userFromDb.setPassword(bCryptPasswordEncoder.encode(userFromInput.getPassword()));
+        }
+        userFromDb.setEmail(userFromInput.getEmail());
+        userFromDb.setFullName(userFromInput.getFullName());
+
+        userService.updateUser(userFromDb);
+        return new ModelAndView("redirect:" + "/dashboard", "msg", "Profile Updated Successfully!");
+
+//        return mv;
+    }
+
+    @RequestMapping("/createSl")
+    public ModelAndView openCreateSl(ModelAndView mv) {
+        System.out.println("Inside /createSl");
+        mv.setViewName("create_sl");
+
+        return mv;
+    }
+
+    @PostMapping("/createSl")
+    public ModelAndView createSl(ModelAndView mv, SlUrl slUrl) {
+        System.out.println("Inside /createSl Post\nDestUrl = " + slUrl.getDestinationUrlLink());
+//        mv.setViewName("userlinks");
+        String username = userService.getCurrentLoggedinUsername();
+        slUrl.setUser(new User(username));
+        slUrl.setShortUrlLink(userService.getShortenUrl());
+        slUrl.setCreationDate(new Date());
+        urlRepository.save(slUrl);
+        return new ModelAndView("redirect:/userlinks");
+    }
+
+    @RequestMapping("/userLinks")
+    public ModelAndView userLinks(ModelAndView mv, HttpServletRequest request) {
+        System.out.println("Inside /userLinks");
+
+        String username = userService.getCurrentLoggedinUsername();
+        List<SlUrl> urlList = urlRepository.findLinkByUser(new User(username));
+
+        mv.addObject("data", urlList);
+        mv.addObject("baseUrl", AppUtils.getBaseUrl(request));
+        mv.setViewName("userlinks");
+
+        System.out.println("\nURL = " + AppUtils.getBaseUrl(request));
+
+        return mv;
+    }
+
+    @RequestMapping("/deleteUserAccount/{username}")
+    public ModelAndView deleteAccount(ModelAndView mv, @PathVariable String username) {
+        System.out.println("Inside /deleteUserAccount /username = " + username);
+        mv.setViewName("delete_user");
+
+        return mv;
+    }
+
+    @PostMapping("/deleteUserAccount/{username}")
+    public ModelAndView deleteUserAccount(ModelAndView mv, @PathVariable String username) {
+        System.out.println("Inside /deleteUserAccount /username = " + username);
+        userService.deleteUser(username);
+        mv.setViewName("register");
+        mv.addObject("error", "You have deleted your account. If you want to login, you have to register a new account! ");
+
+        return mv;
+    }
+    
 //    @RequestMapping("/customError")
 //    public ModelAndView error(ModelAndView mv, HttpServletRequest request) throws IOException {
 //        System.out.println("Inside /error");

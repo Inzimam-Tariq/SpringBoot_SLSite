@@ -6,14 +6,21 @@
 package devdoc;
 
 
-
 /**
  *
  * @author Inzimam Tariq
  */
-public class testMain {
-    public static void main(String[] args) {
-        System.out.println(AppUtils.randomString(8));
+public class TestMain {
+
+   static public void main(String[] args) {
+        System.out.println("Random 8 character string = "+AppUtils.randomString(8));
+        String arr[] = {"1","2","3"};
+        System.out.println(arr.length);
         
     }
+
+   
+}
+class Test {
+
 }

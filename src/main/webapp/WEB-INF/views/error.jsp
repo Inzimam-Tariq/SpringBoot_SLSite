@@ -17,7 +17,7 @@
         <% response.getWriter().flush(); %>
         <body style="padding-bottom: 70px;" onload="startCountdown()">
             <%--<jsp:include page="sidebar.jsp" />--%> 
-            <div class="container-fluid">
+            <div class="container-fluid" style="padding-top: 30px">
                 <div class="row">
                     <!--/left advert space-->
                     <div class="col-sm-3 d-none d-sm-block" style="background-color:lavender;">
@@ -38,9 +38,10 @@
                         <div class="container-fluid d-flex flex-column justify-content-center align-items-center"><br>
                             <p>Our system detected an invalid visit or the visit key has expired. Please try again!</p>
 
-                            <button class="btn btn-lg btn-primary" id="submit" onclick="location.href ='/dashboard'" >Go To Dashboard</button>
-                        
-                        <img class="mb-4 rounded align-self-center" src="https://media.giphy.com/media/RHzqdZJztOu7S/giphy.gif" alt="The requested source not found!">
+                            <button class="btn btn-lg btn-primary" type="submit" onclick="location.href = '/dashboard'" >
+                                Go To Dashboard</button>
+
+                            <!--<img class="mb-4 rounded align-self-center" src="https://media.giphy.com/media/RHzqdZJztOu7S/giphy.gif" alt="The requested source not found!">-->
 
                         </div>
                     </div>

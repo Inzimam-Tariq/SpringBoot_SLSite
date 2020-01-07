@@ -6,12 +6,15 @@
 package devdoc;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -32,9 +35,10 @@ public class User implements Serializable {
     private String email;
 
     @Column(name = "fullName")
+    @Size(min = 5, max = 30)
     @NotEmpty(message = "Please provide your full name")
     private String fullName;
-
+    
     @Column(name = "password")
     private String password;
 
@@ -48,16 +52,21 @@ public class User implements Serializable {
     private String ipAddress;
 
     @Column(name = "regDate")
-    private String regDate;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date regDate;
 
     @Column(name = "access")
     private boolean access;
 
     public User() {
     }
+    
+    public User(String username) {
+        this.username = username;
+    }
 
     public User(String username, String email, String fullName, String password, boolean enabled,
-            String uuid, String ipAddress, String regDate, boolean access) {
+            String uuid, String ipAddress, Date regDate, boolean access) {
         this.username = username;
         this.email = email;
         this.fullName = fullName;
@@ -125,11 +134,11 @@ public class User implements Serializable {
         this.ipAddress = ipAddress;
     }
 
-    public String getRegDate() {
+    public Date getRegDate() {
         return regDate;
     }
 
-    public void setRegDate(String regDate) {
+    public void setRegDate(Date regDate) {
         this.regDate = regDate;
     }
 

@@ -24,6 +24,8 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    UrlRepository urlRepository;
 
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -50,11 +52,19 @@ public class UserService implements UserDetailsService {
     public void saveUser(User user) {
         user.setIpAddress(AppUtils.getCurrentIp());
         user.setRegDate(AppUtils.getCurrentDate());
-        user.setEnabled(true);
+        user.setEnabled(false);
         user.setAccess(true);
         user.setUuid(getUUId());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+    }
+
+    public void updateUser(User user) {
+        userRepository.save(user);
+    }
+
+    public void deleteUser(String username) {
+        userRepository.deleteById(username);
     }
 
     public String getUUId() {
@@ -66,7 +76,16 @@ public class UserService implements UserDetailsService {
         return uuid;
     }
 
-    public User getUserDetailByEmailOrUsername(String usernameOrEmail, String callingFrom) {
+    public String getShortenUrl() {
+        String url = AppUtils.randomString(6);
+        System.out.println("UUId = " + url);
+        if (urlRepository.findByShortUrlLink(url) != null) {
+            getShortenUrl();
+        }
+        return url;
+    }
+
+    public User getUserlByEmailOrUsername(String usernameOrEmail, String callingFrom) {
         User user;
         if (usernameOrEmail.contains("@")) {
             user = userRepository.findByEmail(usernameOrEmail);
@@ -92,5 +111,9 @@ public class UserService implements UserDetailsService {
     public boolean isUserByEmailPresent(String email) {
 
         return userRepository.existsByEmail(email);
+    }
+
+    boolean userHasRight(String username) {
+        return username.equals(getCurrentLoggedinUsername());
     }
 }

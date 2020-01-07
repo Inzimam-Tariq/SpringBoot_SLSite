@@ -17,7 +17,7 @@
         <% response.getWriter().flush(); %>
         <body style="padding-bottom: 70px;">
             
-            <div class="container-fluid">
+            <div class="container-fluid" style="padding-top: 30px">
                 <div class="row">
                     <!--/left advert space-->
                     <div class="col-sm-3 d-none d-sm-block" style="background-color:lavender;">
@@ -34,7 +34,7 @@
                     </div>
                     <!--/actual content body -->
                     <div class="col-sm-6" >
-                        <div class="container-fluid"><br>
+                        <div class="container-fluid d-flex flex-column align-items-center justify-content-center"><br>
                             <h1 class="display-4 d-md-display-4"><b>Title_Here</b></h1>
                             <p>This is a long test text for demo paragraph.</p>
                         </div>

@@ -30,7 +30,7 @@
         </head>
         <% response.getWriter().flush(); %>
         <body style="padding-bottom: 70px;">
-            <div class="container-fluid">
+            <div class="container-fluid" style="padding-top: 30px">
                 <div class="row d-flex">
                     <!--/left advert space-->
                     <div class="col-sm-3 d-none d-sm-block" style="background-color:lavender;">
@@ -50,11 +50,11 @@
                         <h1 class="display-4 d-md-display-4"><b></b></h1>
                         <div class="container-fluid"><br>
                             <!-- User profile form code start-->
-                            <form:form modelAttribute="user" class="signup-form bg-dark text-light d-flex flex-column align-items-center" action="submitProfile" method="Post"
-                                  oninput="result.value=!!confirm_password.value&&(uPassword.value==confirm_password.value)?'Matched!':'Both password fields must be same!'">
+                            <form:form modelAttribute="user" class="signup-form bg-dark text-light d-flex flex-column align-items-center" action="/userProfile/${username}" method="Post"
+                                       oninput="result.value=!!confirm_password.value&&(uPassword.value==confirm_password.value)?'Matched!':'Both password fields must be same!'">
                                 <div class="text-center mb-4">
-                                    <img class="mb-4" src="images/img_avatar2.png" alt="" width="72" height="72">
-                                    <h2 class="form-signin-heading"></h2>
+                                    <img class="mb-4" src="/images/img_avatar2.png" alt="" width="72" height="72">
+                                    <!--<h2 class="form-signin-heading"></h2>-->
                                     <p>Here is your Profile Information</p>
                                     <hr>
                                 </div>
@@ -102,7 +102,7 @@
                                             <span class="fa fa-lock"></span>
                                         </span>                    
                                     </div>
-                                    <input type="password" class="form-control" name="newPassword" placeholder="New Password Here">
+                                    <input type="password" class="form-control" name="password" placeholder="New Password Here">
                                 </div>
                                 <br>
                                 <div class="input-group">
@@ -121,6 +121,8 @@
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-primary btn-lg">Update Profile</button>
                                 </div>
+                                Delete you account by Clicking
+                                <a href='/deleteUserAccount/${username}'>Delete Account</a>
                             </form:form>
                             <!-- Registration form code end -->
                         </div>

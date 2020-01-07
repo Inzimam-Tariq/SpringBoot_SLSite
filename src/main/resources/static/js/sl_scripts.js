@@ -43,11 +43,26 @@ function getRandomInt() {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
-function changeMembershipBadgeColor(){
+function changeMembershipBadgeColor() {
     var goldColor = "#ffd700";
     var brownColor = "#964B00";
     var silverColor = "#ffffff";
     document.getElementById("mem_badge").style.color = silverColor;
-    
-    $('[data-toggle="tooltip"]').tooltip(); 
+
+    $('[data-toggle="tooltip"]').tooltip();
+}
+
+function copyShortLink(id) {
+//    var copyBtn = document.getElementById('copy_' + id);
+    var input = document.getElementById(id);
+    var td = document.getElementById("copyTd_" + id);
+    /* Select the text field */
+    td.hidden = false;
+    input.select();
+    input.setSelectionRange(0, 99999); /*For mobile devices*/
+
+    /* Copy the text inside the text field */
+    document.execCommand("copy");
+//    copyBtn.innerHTML = 'Copied';
+    td.hidden = true;
 }

@@ -8,6 +8,8 @@ package devdoc;
 import static devdoc.ViewNameConstants.INDEX;
 import static devdoc.ViewNameConstants.LOGIN;
 import static devdoc.ViewNameConstants.REGISTER;
+import java.util.Iterator;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +21,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
@@ -37,7 +43,13 @@ public class RegisterController {
     @RequestMapping("/")
     public String home() {
         System.out.println("/ Working!!!!");
-        return INDEX;
+        return "redirect:" + REGISTER;
+    }
+
+    @RequestMapping(INDEX)
+    public String index() {
+        System.out.println("Index Working!!!!");
+        return REGISTER;
     }
 
     @RequestMapping("/register")
@@ -46,43 +58,50 @@ public class RegisterController {
         return REGISTER;
     }
 
-    @RequestMapping(INDEX)
-    public String index() {
-        System.out.println("Index Working!!!!");
-        return INDEX;
-    }
-
     @PostMapping("/register")
-    public ModelAndView registerUser(User user) {
+    public ModelAndView registerUser(@Valid User user, BindingResult result) {
         System.out.println("\n\nInside registerUser Method\n\n");
 
         ModelAndView mv = new ModelAndView();
-        System.out.println("processUserRegistration"
+        String validaError = "You need to fix these errors:";
+        for (Object object : result.getAllErrors()) {
+            if (object instanceof FieldError) {
+                FieldError fieldError = (FieldError) object;
+                validaError += "\n" + fieldError.getField() + ", " + fieldError.getDefaultMessage();
+
+                System.out.println("Error from bindingResult = " + fieldError.getDefaultMessage());
+            }
+        }
+        System.out.println("Total validationError = " + validaError);
+
+        System.out.println("\nprocessUserRegistration"
                 + "\nThese records are from user input"
                 + "\nUsername = " + user.getUsername() + "\nEmail = " + user.getEmail()
                 + "\nFull Name = " + user.getFullName() + "\nPassword = " + user.getPassword()
                 + "\nIP Address = " + user.getIpAddress());
+        if (result.hasErrors()) {
+            mv.setViewName(REGISTER);
+            return new ModelAndView("redirect:" + REGISTER, "validationError", validaError);
+        }
         boolean isUsernamePresent = userService.isUserByUsernamePresent(user.getUsername());
         boolean isEmailPresent = userService.isUserByEmailPresent(user.getEmail());
 
         //check if username or email already present in database
         if (isUsernamePresent || isEmailPresent) {
-            mv.setViewName(REGISTER);
-            mv.addObject("error", "This username or email alreary exit!");
-
+            return new ModelAndView("redirect:" + REGISTER, "error", "This username or email alreary exit!");
         } else {
             try {
                 userService.saveUser(user);
             } catch (Exception e) {
-                mv.setViewName(REGISTER);
-                mv.addObject("error", "Something went wrong!");
+                return new ModelAndView("redirect:" + REGISTER, "error", "Error saving data!");
+//                mv.addObject("error", "Something went wrong!");
             }
 
             // check if the user successfully have been added to database by getting current user
-            User newUser = userService.getUserDetailByEmailOrUsername(user.getUsername(), "fromProcessUserRegistration");
+            User newUser = userService.getUserlByEmailOrUsername(user.getUsername(), "fromProcessUserRegistration");
             if (user.getUsername().equals(newUser.getUsername())) {
-                mv.setViewName(LOGIN);
-                mv.addObject("msg", "You have successfully created an account! check your email to confirm your registration");
+                String msg = "You have successfully created an account! check your email to confirm your registration";
+                return new ModelAndView("redirect:" + LOGIN, "msg", msg);
             }
         }
 
@@ -123,11 +142,10 @@ public class RegisterController {
 //        return model;
 //
 //    }
-
-    @RequestMapping("/logout")
-    public String login_logout(Model model) {
-        model.addAttribute("message", "Successfully Logged Out!");
-        System.out.println("Login working!!!!");
-        return LOGIN;
-    }
+//    @RequestMapping("/logout")
+//    public String login_logout(Model model) {
+//        model.addAttribute("message", "Successfully Logged Out!");
+//        System.out.println("Login working!!!!");
+//        return LOGIN;
+//    }
 }

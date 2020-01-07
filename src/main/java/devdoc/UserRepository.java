@@ -5,9 +5,10 @@
  */
 package devdoc;
 
-
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -26,4 +27,9 @@ public interface UserRepository extends JpaRepository<User, String> {
     public boolean existsByEmail(String email);
 
     User findByUuid(String confirmationToken);
+
+    @Modifying
+    @Query(value = "UPDATE Users u set email =?1 where u.username = ?2",
+            nativeQuery = true)
+    void updateUser(String email, String username);
 }

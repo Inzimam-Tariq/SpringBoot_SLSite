@@ -16,12 +16,13 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -31,7 +32,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  */
 public class AppUtils {
 
-    
     private static final String[] IP_HEADER_CANDIDATES = {
         "X-Forwarded-For",
         "Proxy-Client-IP",
@@ -103,10 +103,30 @@ public class AppUtils {
         return returnString;
     }
 
-    public static String getCurrentDate() {
+    public static Date getCurrentDate() {
+        return new Date();
+    }
+
+    public static Date getPreviousDateByDays(int minusDays) {
+        Calendar cal = new GregorianCalendar();
+        cal.setTime(getCurrentDate());
+        cal.add(Calendar.DAY_OF_MONTH, minusDays);
+
+        return cal.getTime();
+    }
+
+    public static Date getPreviousDateByHours(int minusHours) {
+        Calendar cal = new GregorianCalendar();
+        cal.setTime(getCurrentDate());
+        cal.add(Calendar.HOUR, minusHours);
+
+        return cal.getTime();
+    }
+
+    public static String formateDate(Date date) {
         SimpleDateFormat formater = new SimpleDateFormat("dd-MMM-yyyy");
 
-        return formater.format(new Date());
+        return formater.format(date);
     }
 
     static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -121,7 +141,19 @@ public class AppUtils {
     }
 
     public static String getUUId() {
-        return UUID.randomUUID().toString().replace("-", "");                
+        return UUID.randomUUID().toString().replace("-", "");
+    }
+
+    public static String getBaseUrl(HttpServletRequest request) {
+        String scheme = request.getScheme() + "://";
+        String serverName = request.getServerName();
+        String serverPort = (request.getServerPort() == 80) ? "" : ":" + request.getServerPort();
+        String contextPath = request.getContextPath();
+        return scheme + serverName + serverPort + contextPath;
+    }
+
+    public static String getSiteName() {
+        return "LinkDoc";
     }
 
 }
