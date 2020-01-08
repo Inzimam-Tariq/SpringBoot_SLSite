@@ -93,7 +93,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
         ms.setPort(587);
 
         ms.setUsername("inzi.javamailtest@gmail.com");
-        ms.setPassword("passwodHere");
+        ms.setPassword("passwordHere");
 
         Properties props = ms.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

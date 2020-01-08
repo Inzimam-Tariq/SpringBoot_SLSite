@@ -79,7 +79,7 @@
                                             <br>
                                             <br>
                                             <div class="card-footer mt-auto">
-                                                <button type="submit" class="btn btn-primary btn-lg" onclick="location.href = '#';">Create Shortlink</button>
+                                                <button type="submit" class="btn btn-primary btn-lg">Create Shortlink</button>
                                             </div>
                                         </div>
                                     </form>

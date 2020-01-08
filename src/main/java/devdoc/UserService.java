@@ -76,15 +76,6 @@ public class UserService implements UserDetailsService {
         return uuid;
     }
 
-    public String getShortenUrl() {
-        String url = AppUtils.randomString(6);
-        System.out.println("UUId = " + url);
-        if (urlRepository.findByShortUrlLink(url) != null) {
-            getShortenUrl();
-        }
-        return url;
-    }
-
     public User getUserlByEmailOrUsername(String usernameOrEmail, String callingFrom) {
         User user;
         if (usernameOrEmail.contains("@")) {

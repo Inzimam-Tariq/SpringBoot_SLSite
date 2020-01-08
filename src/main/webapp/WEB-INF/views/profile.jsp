@@ -121,7 +121,7 @@
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-primary btn-lg">Update Profile</button>
                                 </div>
-                                Delete you account by Clicking
+                                Not interested to hold this account anymore? You can delete your account by Clicking Delete Account link given below.
                                 <a href='/deleteUserAccount/${username}'>Delete Account</a>
                             </form:form>
                             <!-- Registration form code end -->

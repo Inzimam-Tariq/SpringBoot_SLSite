@@ -12,12 +12,15 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -27,23 +30,27 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomeController {
 
-    @Autowired
     UserService userService;
-    @Autowired
     SlUrlService slUrlService;
-    @Autowired
     UrlRepository urlRepository;
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    BCryptPasswordEncoder bCryptPasswordEncoder;
-    
+    public HomeController(UserService userService, SlUrlService slUrlService,
+            UrlRepository urlRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.userService = userService;
+        this.slUrlService = slUrlService;
+        this.urlRepository = urlRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
+
     @RequestMapping("/MailTemplate")
-    public String openMailTemp(){
+    public String openMailTemp() {
         return "emailspecimen";
     }
-    
+
     @RequestMapping("/faqs")
-    public ModelAndView openFaqs(ModelAndView mv){
+    public ModelAndView openFaqs(ModelAndView mv) {
         String sitename = AppUtils.getSiteName();
         mv.addObject("sitename", sitename);
         mv.setViewName("faqs");
@@ -59,9 +66,9 @@ public class HomeController {
         System.out.println("\nList size = " + urlTotal.size());
         Date today = new Date();
 
-        Date days30 = AppUtils.getPreviousDateByDays(-30);
-        Date days7 = AppUtils.getPreviousDateByDays(-7);
-        Date hour24 = AppUtils.getPreviousDateByHours(-23);
+        Date days30 = AppUtils.getDateByDays(-30);
+        Date days7 = AppUtils.getDateByDays(-7);
+        Date hour24 = AppUtils.getDateByHours(-23);
 
         List<SlUrl> urlBetweenDaysByAllUsers = urlRepository.findAllByCreationDateBetween(days30, today);
 
@@ -125,15 +132,16 @@ public class HomeController {
     }
 
     @PostMapping("/createSl")
-    public ModelAndView createSl(ModelAndView mv, SlUrl slUrl) {
+    public ModelAndView createSl(SlUrl slUrl) {
         System.out.println("Inside /createSl Post\nDestUrl = " + slUrl.getDestinationUrlLink());
-//        mv.setViewName("userlinks");
+
         String username = userService.getCurrentLoggedinUsername();
         slUrl.setUser(new User(username));
-        slUrl.setShortUrlLink(userService.getShortenUrl());
+        slUrl.setShortUrlLink(slUrlService.getShortenUrl());
         slUrl.setCreationDate(new Date());
         urlRepository.save(slUrl);
-        return new ModelAndView("redirect:/userlinks");
+
+        return new ModelAndView("redirect:/userLinks");
     }
 
     @RequestMapping("/userLinks")
@@ -169,7 +177,34 @@ public class HomeController {
 
         return mv;
     }
-    
+
+    @GetMapping("/urls")
+    public ModelAndView openPageableUrls(ModelAndView mv, HttpServletRequest request,
+            @RequestParam(defaultValue = "0") int page) {
+        System.out.println("Inside /urls");
+        Page<SlUrl> urls = slUrlService.getUrlsByPage(page, 5);
+        List<SlUrl> urlList = urls.getContent();
+        System.out.println("Url count = " + urls.getSize()
+                + " Number = " + urls.getNumber() + " Elements = " + urls.getNumberOfElements());
+        Pager pager = new Pager(urls);
+        
+        mv.addObject("baseUrl", AppUtils.getBaseUrl(request));
+        mv.addObject("pager", pager);
+        urls.getTotalPages();
+        mv.addObject("page", urls);
+        mv.setViewName("pagination");
+
+        for (int i = 0; i < urlList.size(); i++) {
+            System.out.println("\nURLs Details:"
+                    + "\nid = " + urlList.get(i).getId()
+                    + "\nid = " + urlList.get(i).getDestinationUrlLink()
+                    + "\nid = " + urlList.get(i).getShortUrlLink()
+                    + "\nid = " + urlList.get(i).getUser().getUsername());
+        }
+
+        return mv;
+    }
+
 //    @RequestMapping("/customError")
 //    public ModelAndView error(ModelAndView mv, HttpServletRequest request) throws IOException {
 //        System.out.println("Inside /error");

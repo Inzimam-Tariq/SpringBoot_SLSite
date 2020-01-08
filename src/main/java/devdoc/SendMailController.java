@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  *
@@ -29,12 +30,13 @@ public class SendMailController {
 //        return "sendmail";
 //    }
     @RequestMapping("/sendMail")
-    public String sendMail(HttpServletRequest request) throws MessagingException {
+    public ModelAndView sendMail(HttpServletRequest request) throws MessagingException {
         String username = userService.getCurrentLoggedinUsername();
         User user = userService.getUserlByEmailOrUsername(username, "SendMailController");
 
         emailServiceImpl.sendWelcomeMessage(user.getEmail(), user.getFullName(), request);
-        return "dashboard";
+        return new ModelAndView("redirect:/dashboard", "msg",
+                "An email has been successfully sent on " + user.getEmail());
     }
 
 }

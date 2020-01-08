@@ -107,18 +107,18 @@ public class AppUtils {
         return new Date();
     }
 
-    public static Date getPreviousDateByDays(int minusDays) {
+    public static Date getDateByDays(int days) {
         Calendar cal = new GregorianCalendar();
         cal.setTime(getCurrentDate());
-        cal.add(Calendar.DAY_OF_MONTH, minusDays);
+        cal.add(Calendar.DAY_OF_MONTH, days);
 
         return cal.getTime();
     }
 
-    public static Date getPreviousDateByHours(int minusHours) {
+    public static Date getDateByHours(int hours) {
         Calendar cal = new GregorianCalendar();
         cal.setTime(getCurrentDate());
-        cal.add(Calendar.HOUR, minusHours);
+        cal.add(Calendar.HOUR, hours);
 
         return cal.getTime();
     }

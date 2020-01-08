@@ -6,6 +6,9 @@
 package devdoc;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,6 +30,15 @@ public class SlUrlService {
             getShortenUrl();
         }
         return url;
+    }
+
+    public Page<SlUrl> getUrlsByPage(int pageNumber, int numberOfElementsPerPage) {
+
+        return urlRepository.findAllByOrderByCreationDateDesc(PageRequest.of(subtractPageByOne(pageNumber), numberOfElementsPerPage));
+    }
+
+    private int subtractPageByOne(int page) {
+        return (page < 1) ? 0 : page - 1;
     }
 
 //    public Long getListOfShortlinksBetweenDates(User user) {

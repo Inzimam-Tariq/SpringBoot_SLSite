@@ -36,9 +36,13 @@
                     <div class="col-sm-6" >
                         <div class="container-fluid d-flex flex-column align-items-center justify-content-center"><br>
                             <h1 class="display-4 d-md-display-4"><b>Delete Account</b></h1>
-                            <p>Please read this instruction statement carefully before any action as this process is irreversible. Are you sure, you want to delete your account? All your information will be gone and you would not be able to access your this account again.
-                                <br>Later on if you wish to access this account, Please don't delete it otherwise you will need to create new account and will have to make a fresh start.
-                                <br>If you agree to the above statement then click on <b>Delete Account</b> button.
+                            <p>Please read this instruction statement carefully before any action as this process is irreversible.
+                                Are you sure, you want to delete your account? All your information will be gone and 
+                                you would not be able to access your this account again.
+                                <br>Later on, if you wish to access this account, Please don't delete it otherwise you will 
+                                need to create new account and will have to make a fresh start.
+                                <br>If you agree to the above statement then click on <b>Delete Account</b> button to 
+                                permanently delete your account.
                             </p>
                             <form action="/deleteUserAccount/${username}" data-toggle="modal" data-target="#myModal" method="Post">
                                 <button type="button" class="btn btn-primary" data-dismiss="modal">Delete Account</button>
@@ -56,7 +60,9 @@
 
                                             <!-- Modal body -->
                                             <div class="modal-body">
-                                                Are you sure, you want to delete your account? All your information will be gone and you would not be able to access your account.
+                                                <b>We are sorry to see you go.</b>
+                                                Are you sure, you want to delete your account? 
+                                                All your information will be gone and you would not be able to access your account.
                                             </div>
 
                                             <!-- Modal footer -->

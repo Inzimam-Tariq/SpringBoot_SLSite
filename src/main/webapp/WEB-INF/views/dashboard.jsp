@@ -35,7 +35,7 @@
                     <!--/actual content body -->
                     <div class="col-sm-6" >
                         <h1 class="display-4 d-md-display-4"><b></b></h1>
-                        <div class="container-fluid"><br>
+                        <div class="container-fluid">
 
                             <c:if test="${!user.isEnabled()}">
                                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
