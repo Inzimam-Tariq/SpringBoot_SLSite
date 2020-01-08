@@ -3,8 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package devdoc;
+package devdoc.service;
 
+import devdoc.util.AppUtils;
+import devdoc.repo.UserRepository;
+import devdoc.repo.UrlRepository;
+import devdoc.model.SlUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

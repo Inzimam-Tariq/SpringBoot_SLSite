@@ -3,8 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package devdoc;
+package devdoc.controller;
 
+import devdoc.service.EmailService;
+import devdoc.model.User;
+import devdoc.service.UserService;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;

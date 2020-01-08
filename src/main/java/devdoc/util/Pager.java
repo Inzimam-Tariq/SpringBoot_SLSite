@@ -1,6 +1,7 @@
-package devdoc;
+package devdoc.util;
 
 
+import devdoc.model.SlUrl;
 import org.springframework.data.domain.Page;
 
 /**

@@ -3,12 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package devdoc;
+package devdoc.controller;
 
-import java.util.ArrayList;
-import java.util.Calendar;
+import devdoc.util.AppUtils;
+import devdoc.util.Pager;
+import devdoc.model.SlUrl;
+import devdoc.service.SlUrlService;
+import devdoc.repo.UrlRepository;
+import devdoc.model.User;
+import devdoc.service.UserService;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -187,7 +191,7 @@ public class HomeController {
         System.out.println("Url count = " + urls.getSize()
                 + " Number = " + urls.getNumber() + " Elements = " + urls.getNumberOfElements());
         Pager pager = new Pager(urls);
-        
+
         mv.addObject("baseUrl", AppUtils.getBaseUrl(request));
         mv.addObject("pager", pager);
         urls.getTotalPages();
@@ -205,11 +209,11 @@ public class HomeController {
         return mv;
     }
 
-//    @RequestMapping("/customError")
-//    public ModelAndView error(ModelAndView mv, HttpServletRequest request) throws IOException {
-//        System.out.println("Inside /error");
-//        mv.setViewName("error");
-//
-//        return mv;
-//    }
+    @RequestMapping("/contactUs")
+    public ModelAndView contactUs(ModelAndView mv) {
+        System.out.println("Inside /contactUs");
+        mv.setViewName("contactus");
+
+        return mv;
+    }
 }

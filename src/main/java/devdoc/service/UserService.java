@@ -3,8 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package devdoc;
+package devdoc.service;
 
+import devdoc.util.AppUtils;
+import devdoc.model.User;
+import devdoc.repo.UserRepository;
+import devdoc.repo.UrlRepository;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -104,7 +108,7 @@ public class UserService implements UserDetailsService {
         return userRepository.existsByEmail(email);
     }
 
-    boolean userHasRight(String username) {
+    public boolean userHasRight(String username) {
         return username.equals(getCurrentLoggedinUsername());
     }
 }

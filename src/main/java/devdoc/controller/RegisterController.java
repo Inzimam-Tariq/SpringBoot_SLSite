@@ -3,11 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package devdoc;
+package devdoc.controller;
 
-import static devdoc.ViewNameConstants.INDEX;
-import static devdoc.ViewNameConstants.LOGIN;
-import static devdoc.ViewNameConstants.REGISTER;
+import devdoc.model.User;
+import devdoc.repo.UserRepository;
+import devdoc.service.UserService;
+import static devdoc.util.ViewNameConstants.INDEX;
+import static devdoc.util.ViewNameConstants.LOGIN;
+import static devdoc.util.ViewNameConstants.REGISTER;
 import java.util.Iterator;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

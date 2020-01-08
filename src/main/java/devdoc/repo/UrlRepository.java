@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package devdoc;
+package devdoc.repo;
 
+import devdoc.model.User;
+import devdoc.model.SlUrl;
 import java.util.Date;
 import java.util.List;
 import org.springframework.data.domain.Page;
