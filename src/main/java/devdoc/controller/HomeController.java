@@ -5,13 +5,13 @@
  */
 package devdoc.controller;
 
+import devdoc.model.SlUrl;
+import devdoc.model.User;
+import devdoc.repo.UrlRepository;
+import devdoc.service.SlUrlService;
+import devdoc.service.UserService;
 import devdoc.util.AppUtils;
 import devdoc.util.Pager;
-import devdoc.model.SlUrl;
-import devdoc.service.SlUrlService;
-import devdoc.repo.UrlRepository;
-import devdoc.model.User;
-import devdoc.service.UserService;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -65,30 +65,26 @@ public class HomeController {
     public ModelAndView dashboard(ModelAndView mv) {
         String username = userService.getCurrentLoggedinUsername();
         System.out.println("Inside /dashboard\nuNameFrom Auth = " + username);
-        User u = userService.getUserlByEmailOrUsername(username, "Dashboard");
-        List<SlUrl> urlTotal = urlRepository.findLinkByUser(new User(username));
-        System.out.println("\nList size = " + urlTotal.size());
+        User user = userService.getUserlByEmailOrUsername(username, "Dashboard");
+//        List<SlUrl> urlTotal = urlRepository.findLinkByUser(u);
+//        System.out.println("\nList size = " + urlTotal.size());
         Date today = new Date();
 
         Date days30 = AppUtils.getDateByDays(-30);
         Date days7 = AppUtils.getDateByDays(-7);
         Date hour24 = AppUtils.getDateByHours(-23);
 
-        List<SlUrl> urlBetweenDaysByAllUsers = urlRepository.findAllByCreationDateBetween(days30, today);
 
-        List<Object> urlTotal30days = urlRepository.getListOfShortlinksBetweenDates(new User(username), days30, today);
-        List<Object> urlTotal7days = urlRepository.getListOfShortlinksBetweenDates(new User(username), days7, today);
-        List<Object> urlToday = urlRepository.getListOfShortlinksBetweenDates(new User(username), hour24, today);
-        System.out.println("\nLinksShortenToday = "
-                + urlToday.size() + "Today Date = " + hour24);
+        System.out.println("URL Count by User = " + urlRepository.countUrls(user));
+        System.out.println("URL Count by User between dates= " + urlRepository.countUrlsBetweenDates(user, days7, today));
 
         mv.setViewName("dashboard");
         mv.addObject("username", username);
-        mv.addObject("urlTotal", urlTotal.size());
-        mv.addObject("url30days", urlTotal30days.size());
-        mv.addObject("url7days", urlTotal7days.size());
-        mv.addObject("urlToday", urlToday.size());
-        mv.addObject("user", u);
+        mv.addObject("urlTotal", urlRepository.countUrls(user));
+        mv.addObject("url30days", urlRepository.countUrlsBetweenDates(user, days30, today));
+        mv.addObject("url7days", urlRepository.countUrlsBetweenDates(user, days7, today));
+        mv.addObject("urlToday", urlRepository.countUrlsBetweenDates(user, hour24, today));
+        mv.addObject("user", user);
         return mv;
     }
 
@@ -140,7 +136,8 @@ public class HomeController {
         System.out.println("Inside /createSl Post\nDestUrl = " + slUrl.getDestinationUrlLink());
 
         String username = userService.getCurrentLoggedinUsername();
-        slUrl.setUser(new User(username));
+        User user = userService.getUserlByEmailOrUsername(username, "FromCreateSl");
+        slUrl.setUser(user);
         slUrl.setShortUrlLink(slUrlService.getShortenUrl());
         slUrl.setCreationDate(new Date());
         urlRepository.save(slUrl);
@@ -153,7 +150,8 @@ public class HomeController {
         System.out.println("Inside /userLinks");
 
         String username = userService.getCurrentLoggedinUsername();
-        List<SlUrl> urlList = urlRepository.findLinkByUser(new User(username));
+        User user = userService.getUserlByEmailOrUsername(username, "FromUserLinks");
+        List<SlUrl> urlList = urlRepository.findLinkByUser(user);
 
         mv.addObject("data", urlList);
         mv.addObject("baseUrl", AppUtils.getBaseUrl(request));
@@ -175,7 +173,8 @@ public class HomeController {
     @PostMapping("/deleteUserAccount/{username}")
     public ModelAndView deleteUserAccount(ModelAndView mv, @PathVariable String username) {
         System.out.println("Inside /deleteUserAccount /username = " + username);
-        userService.deleteUser(username);
+        User user = userService.getUserlByEmailOrUsername(username, "FromDeleteAccount");
+        userService.deleteUser(user);
         mv.setViewName("register");
         mv.addObject("error", "You have deleted your account. If you want to login, you have to register a new account! ");
 

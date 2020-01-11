@@ -5,10 +5,10 @@
  */
 package devdoc.service;
 
-import devdoc.util.AppUtils;
 import devdoc.model.User;
-import devdoc.repo.UserRepository;
 import devdoc.repo.UrlRepository;
+import devdoc.repo.UserRepository;
+import devdoc.util.AppUtils;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -16,8 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 /**
  *
@@ -60,15 +60,15 @@ public class UserService implements UserDetailsService {
         user.setAccess(true);
         user.setUuid(getUUId());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        userRepository.saveAndFlush(user);
     }
 
     public void updateUser(User user) {
-        userRepository.save(user);
+        userRepository.saveAndFlush(user);
     }
 
-    public void deleteUser(String username) {
-        userRepository.deleteById(username);
+    public void deleteUser(User user) {
+        userRepository.delete(user);
     }
 
     public String getUUId() {
@@ -98,12 +98,12 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public boolean isUserByUsernamePresent(String username) {
+    public boolean isUserExistsByUsername(String username) {
 
-        return userRepository.existsById(username);
+        return userRepository.findUserByUsername(username) != null;
     }
 
-    public boolean isUserByEmailPresent(String email) {
+    public boolean isUserExistsByEmail(String email) {
 
         return userRepository.existsByEmail(email);
     }

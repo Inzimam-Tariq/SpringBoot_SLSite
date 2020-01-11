@@ -86,8 +86,8 @@ public class RegisterController {
             mv.setViewName(REGISTER);
             return new ModelAndView("redirect:" + REGISTER, "validationError", validaError);
         }
-        boolean isUsernamePresent = userService.isUserByUsernamePresent(user.getUsername());
-        boolean isEmailPresent = userService.isUserByEmailPresent(user.getEmail());
+        boolean isUsernamePresent = userService.isUserExistsByUsername(user.getUsername());
+        boolean isEmailPresent = userService.isUserExistsByEmail(user.getEmail());
 
         //check if username or email already present in database
         if (isUsernamePresent || isEmailPresent) {

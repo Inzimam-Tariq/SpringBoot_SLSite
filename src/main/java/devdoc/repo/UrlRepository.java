@@ -5,8 +5,8 @@
  */
 package devdoc.repo;
 
-import devdoc.model.User;
 import devdoc.model.SlUrl;
+import devdoc.model.User;
 import java.util.Date;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -27,6 +27,12 @@ public interface UrlRepository extends JpaRepository<SlUrl, Long> {
 
     @Query("from SlUrl sl where sl.user =?1 And sl.creationDate between ?2 And ?3")
     List<Object> getListOfShortlinksBetweenDates(User user, Date date1, Date date2);
+
+    @Query("select count(sl) from SlUrl sl where sl.user =?1")
+    long countUrls(User user);
+
+    @Query("select count(sl) from SlUrl sl where sl.user =?1 And sl.creationDate between ?2 And ?3")
+    long countUrlsBetweenDates(User user, Date date1, Date date2);
 
 //    @Query ("from SlUrl sl where sl.user =?1 And sl.creationDate between ?2 And ?3")
 //    List<Object> getListOfShortlinkToday(User user, Date date1, Date date2);

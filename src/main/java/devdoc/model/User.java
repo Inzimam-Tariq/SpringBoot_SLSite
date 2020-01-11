@@ -9,8 +9,10 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -25,6 +27,10 @@ import javax.validation.constraints.Size;
 public class User implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "user_id")
+    private long id;
+
     @Column(name = "username", nullable = false, unique = true)
     @NotEmpty(message = "Please provide a username")
     private String username;
@@ -38,7 +44,7 @@ public class User implements Serializable {
     @Size(min = 5, max = 30)
     @NotEmpty(message = "Please provide your full name")
     private String fullName;
-    
+
     @Column(name = "password")
     private String password;
 
@@ -60,10 +66,10 @@ public class User implements Serializable {
 
     public User() {
     }
-    
-    public User(String username) {
-        this.username = username;
-    }
+
+//    public User(String username) {
+//        this.username = username;
+//    }
 
     public User(String username, String email, String fullName, String password, boolean enabled,
             String uuid, String ipAddress, Date regDate, boolean access) {
@@ -76,6 +82,14 @@ public class User implements Serializable {
         this.ipAddress = ipAddress;
         this.regDate = regDate;
         this.access = access;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -150,13 +164,10 @@ public class User implements Serializable {
         this.access = access;
     }
 
-    
-
     @Override
     public String toString() {
-        return "User{" + "username=" + username + ", email=" + email + ", fullName=" + fullName
-                + ", password=" + password + ", enabled=" + enabled + ", uuid=" + uuid
-                + ", ipAddress=" + ipAddress + ", regDate=" + regDate + ", access=" + access + '}';
+        return "User{" + "id=" + id + ", username=" + username + ", email=" + email + ", fullName=" + fullName + ", password=" + password
+                + ", enabled=" + enabled + ", uuid=" + uuid + ", ipAddress=" + ipAddress + ", regDate=" + regDate + ", access=" + access + '}';
     }
 
 }
